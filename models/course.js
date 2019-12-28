@@ -1,12 +1,16 @@
-const credentials = require('../credentials');
+const keys = require('../config/keys');
 const mongoose = require('mongoose');
-// mongoose.connect('mongodb://localhost/courses', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect(credentials.atlasConnectionString, { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.Promise = global.Promise;
+/* Lokal anslutning */
+// mongoose.connect('mongodb://localhost/testcourses', { useNewUrlParser: true, useUnifiedTopology: true });
+
+/* Molnanslutning */
+// mongoose.connect(keys.atlasConnectionString, { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
-db.once('open', function(callback) {
+db.once('open', function (callback) {
+    console.log('Connected.');
     const courseSchema = mongoose.Schema({
         courseId: String,
         courseName: String,
@@ -15,7 +19,7 @@ db.once('open', function(callback) {
 
     const Course = mongoose.model('Course', courseSchema);
 
-    exports.getCoursesFromDb = cb => {
+    exports.getCourses = cb => {
         Course.find((err, courses) => {
             if (err) return err;
 
@@ -23,7 +27,7 @@ db.once('open', function(callback) {
         });
     };
 
-    exports.getCourseFromDb = (courseId, cb) => {
+    exports.getCourse = (courseId, cb) => {
         Course.findOne({ _id: courseId }, (err, course) => {
             if (err) {
                 cb(err);
@@ -33,19 +37,19 @@ db.once('open', function(callback) {
         });
     };
 
-    exports.addCourseToDb = courseData => {
+    exports.addCourse = courseData => {
         const newCourse = new Course(courseData);
-        newCourse.save((err, newCourse) => { 
+        newCourse.save((err, newCourse) => {
             if (err) {
                 return err;
             } else {
                 return newCourse;
             }
-         });
+        });
     };
 
-    exports.updateCourseInDb = courseData => {
-        Course.updateOne({ _id: courseData._id }, { 
+    exports.updateCourse = courseData => {
+        Course.updateOne({ _id: courseData._id }, {
             courseId: courseData.courseId,
             courseName: courseData.courseName,
             coursePeriod: courseData.coursePeriod
@@ -58,7 +62,7 @@ db.once('open', function(callback) {
         });
     };
 
-    exports.deleteCourseFromDb = courseId => {
+    exports.deleteCourse = courseId => {
         Course.deleteOne({
             _id: courseId
         }, (err, course) => {
