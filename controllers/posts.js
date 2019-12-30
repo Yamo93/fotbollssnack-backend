@@ -67,20 +67,27 @@ exports.updatePost = (req, res) => {
     const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = jwt_decode(token);
     const userId = decoded.id;
+    let userName;
+    User.findById({ _id: userId }, (err, user) => {
+        if (err) return err;
 
-    Post.updateOne({ _id: req.params.id }, {
-        userId,
-        text: req.body.text,
-        forumType: req.body.forumType,
-        date: new Date()
-
-    }, (err, response) => {
-        if (err) {
-            res.send(err);
-        } else {
-            res.status(200).send(response);
-        }
+        userName = user.name;
+    }).then(() => {
+        Post.updateOne({ _id: req.params.id }, {
+            userId,
+            userName,
+            text: req.body.text,
+            forumType: req.body.forumType,
+            date: new Date()
+        }, (err, response) => {
+            if (err) {
+                res.send(err);
+            } else {
+                res.status(200).send(response);
+            }
+        });
     });
+
 };
 
 exports.deletePost = (req, res) => {
