@@ -78,7 +78,7 @@ exports.updatePost = (req, res) => {
             userName,
             text: req.body.text,
             forumType: req.body.forumType,
-            date: new Date()
+            updatedDate: new Date()
         }, (err, response) => {
             if (err) {
                 res.send(err);
