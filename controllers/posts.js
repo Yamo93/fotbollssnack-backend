@@ -54,12 +54,13 @@ exports.addPost = (req, res) => {
         });
         newPost.save((err, newPost) => {
             if (err) {
-                res.send(err);
+                res.status(500).send(err);
             } else {
                 res.status(200).send(newPost);
             }
         });
-    });
+    })
+        .catch(err => err);
 };
 
 exports.updatePost = (req, res) => {
