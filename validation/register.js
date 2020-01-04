@@ -9,6 +9,7 @@ module.exports = function validateRegisterInput(data) {
     data.email = !isEmpty(data.email) ? data.email : "";
     data.password = !isEmpty(data.password) ? data.password : "";
     data.password2 = !isEmpty(data.password2) ? data.password2 : "";
+    data.nickname = !isEmpty(data.nickname) ? data.nickname : "";
 
     // Name checks
     if (Validator.isEmpty(data.name)) {
@@ -17,7 +18,7 @@ module.exports = function validateRegisterInput(data) {
 
     // Email checks
     if (Validator.isEmpty(data.email)) {
-        errors.email = "Du måste fylla i din e-postadress";
+        errors.email = "Du måste fylla i din e-postadress.";
     } else if (!Validator.isEmail(data.email)) {
         errors.email = "E-postadressen är ogiltig.";
     }
@@ -34,6 +35,11 @@ module.exports = function validateRegisterInput(data) {
     }
     if (!Validator.equals(data.password, data.password2)) {
         errors.password2 = "Lösenorden måste matcha.";
+    }
+
+    // Nickname checks
+    if (Validator.isEmpty(data.nickname)) {
+        errors.nickname = "Du måste fylla i ditt användarnamn.";
     }
 
     return {

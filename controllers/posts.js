@@ -40,15 +40,19 @@ exports.addPost = (req, res) => {
     const token = req.header('Authorization').replace('Bearer ', '');
     const decoded = jwt_decode(token);
     const userId = decoded.id;
-    let userName;
+    let userName, nickname, favoriteclub;
     User.findById({ _id: userId }, (err, user) => {
         if (err) return err;
 
         userName = user.name;
+        nickname = user.nickname ? user.nickname : null;
+        favoriteclub = user.favoriteclub ? user.favoriteclub : null;
     }).then(() => {
         const newPost = new Post({
             userId,
             userName,
+            nickname,
+            favoriteclub,
             text: req.body.text,
             forumType: req.body.forumType
         });

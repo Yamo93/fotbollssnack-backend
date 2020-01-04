@@ -10,6 +10,22 @@ const validateLoginInput = require("../validation/login");
 // Load User model
 const User = require("../models/User");
 
+exports.getUserInfoById = (req, res) => {
+    console.log('Getting user info by ID...');
+    const userObj = {};
+
+    User.findById({ _id: req.params.userId }, (err, user) => {
+        console.log(err);
+        if (err) return err;
+
+        userObj.name = user.name;
+        userObj.nickname = user.nickname ? user.nickname : null;
+        userObj.favoriteclub = user.favoriteclub ? user.favoriteclub : null;
+        res.status(200).send(userObj);
+
+    });
+};
+
 exports.registerUser = (req, res) => {
     // Form validation
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -22,24 +38,33 @@ exports.registerUser = (req, res) => {
     User.findOne({ email: req.body.email }).then(user => {
 
         if (user) {
-            return res.status(400).json({ email: "Email already exists" });
+            return res.status(400).json({ email: "E-postadressen existerar redan." });
         } else {
-            const newUser = new User({
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password
-            });
+            User.findOne({ nickname: req.body.nickname }).then(user => {
+                if (user) {
+                    return res.status(400).json({ nickname: "Användarnamnet existerar redan." });
+                } else {
+                    
+                    const newUser = new User({
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: req.body.password,
+                        nickname: req.body.nickname,
+                        favoriteclub: req.body.favoriteclub ? req.body.favoriteclub : null
+                    });
 
-            // Hash password before saving in database
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(newUser.password, salt, (err, hash) => {
-                    if (err) throw err;
-                    newUser.password = hash;
-                    newUser
-                        .save()
-                        .then(user => res.json(user))
-                        .catch(err => console.log(err));
-                });
+                    // Hash password before saving in database
+                    bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.hash(newUser.password, salt, (err, hash) => {
+                            if (err) throw err;
+                            newUser.password = hash;
+                            newUser
+                                .save()
+                                .then(user => res.json(user))
+                                .catch(err => console.log(err));
+                        });
+                    });
+                }
             });
         }
     });

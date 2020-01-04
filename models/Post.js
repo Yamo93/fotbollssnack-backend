@@ -11,6 +11,13 @@ const PostSchema = new Schema({
         type: String,
         required: true
     },
+    nickname: {
+        type: String,
+        required: true
+    },
+    favoriteclub: {
+        type: String
+    },
     text: {
         type: String,
         required: true
