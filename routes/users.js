@@ -6,6 +6,7 @@ const usersControllers = require('../controllers/users');
 // @route POST api/users/register
 // @desc Register user
 // @access Public
+// Sanitisering av inputs
 router.post('/register', [
     body('name')
         .not().isEmpty()
@@ -30,6 +31,7 @@ router.post('/register', [
 // @route POST api/users/login
 // @desc Login user and return JWT token
 // @access Public
+// Sanitisering av inputs
 router.post("/login", [
     body('email')
         .escape(),
